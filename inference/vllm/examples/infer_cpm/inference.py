@@ -40,7 +40,7 @@ params_dict = {
 sampling_params = SamplingParams(**params_dict)
 
 # Create an LLM.
-llm = LLM(model=args.model_path, tensor_parallel_size=1, dtype='bfloat16')
+llm = LLM(model=args.model_path, tensor_parallel_size=4, dtype='bfloat16')
 # Generate texts from the prompts. The output is a list of RequestOutput objects
 # that contain the prompt, generated text, and other information.
 for prompt in prompts:

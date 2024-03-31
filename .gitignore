@@ -1,4 +1,7 @@
 *__pycache__*
 *.pyc
 finetune/output/*
+finetune/MiniCPM*
+inference/vllm/build/
 wip.*
+MiniCPM*
