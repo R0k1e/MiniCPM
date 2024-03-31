@@ -95,10 +95,13 @@ if __name__ == "__main__":
     load_dir = args.load
     
     for lang_type in os.listdir(load_dir):
-        for timestamp in os.listdir(os.path.join(load_dir, lang_type)):
-            for ckpt_path in os.listdir(os.path.join(load_dir, lang_type, timestamp)):
-                load_path = os.path.join(load_dir, lang_type, timestamp, ckpt_path)
-                if load_path.endswith('-vllm'):
-                    continue
-                save_path = load_path + '-vllm'
-                load_model_ckpt(load_path, save_path)  
+        for tags in os.listdir(os.path.join(load_dir, lang_type)):
+            for timestamp in os.listdir(os.path.join(load_dir, lang_type, tags)):
+                for ckpt_path in os.listdir(os.path.join(load_dir, lang_type, tags,timestamp)):
+                    load_path = os.path.join(load_dir, lang_type, tags, timestamp, ckpt_path)
+                    if load_path.endswith('-vllm'):
+                        continue
+                    if os.path.exists(load_path + '-vllm'):
+                        continue
+                    save_path = load_path + '-vllm'
+                    load_model_ckpt(load_path, save_path)  
