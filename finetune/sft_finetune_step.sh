@@ -9,12 +9,13 @@ SEED=42
 BATCH=14
 LR=5e-5
 WARMUP=100
-MAX_STEPS=1278
+MAX_STEPS=852
 WEIGHT_DECAY=0.01
+OUTPUT_DIR=${MODEL}/${LANGUAGE}_all/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
 
 deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
     --model_name_or_path /data/public/wangshuo/UltraLink/models/${MODEL} \
-    --output_dir ${MODEL}/${LANGUAGE}_all/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/ \
+    --output_dir  ${OUTPUT_DIR} \
     --train_data_path /data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/train_${LANGUAGE}_all.jsonl \
     --eval_data_path /data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/dev_${LANGUAGE}_all.jsonl \
     --learning_rate ${LR} --per_device_train_batch_size ${BATCH} \
@@ -27,4 +28,4 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
     --deepspeed configs/ds_config_zero2.json 
 
 
-python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ${MODEL}
+python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${MODEL} | tee ${OUTPUT_DIR}/train.log
