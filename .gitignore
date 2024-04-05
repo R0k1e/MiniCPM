@@ -5,3 +5,4 @@ finetune/MiniCPM*
 inference/vllm/build/
 wip.*
 MiniCPM*
+datas/

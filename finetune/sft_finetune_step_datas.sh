@@ -1,23 +1,22 @@
 formatted_time=$(date +"%Y%m%d%H%M%S")
 echo $formatted_time
 
-#/home/wanghaoyu/MiniCPM/finetune/MiniCPM-2B-history
-LANGUAGE=$1
+DATANAME=$1
 MODEL=$2
 
 SEED=42
 BATCH=14
 LR=5e-5
 WARMUP=100
-MAX_STEPS=852
+MAX_STEPS=1100
 WEIGHT_DECAY=0.01
-OUTPUT_DIR=${MODEL}/${LANGUAGE}_all/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
+OUTPUT_DIR=${MODEL}/${DATANAME}/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
 
 deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
     --model_name_or_path /data/public/wangshuo/UltraLink/models/${MODEL} \
     --output_dir  ${OUTPUT_DIR} \
-    --train_data_path /data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/train_${LANGUAGE}_all.jsonl \
-    --eval_data_path /data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/dev_${LANGUAGE}_all.jsonl \
+    --train_data_path  ../datas/${DATANAME}.jsonl \
+    --eval_data_path ../datas/dev_ru_code.jsonl\
     --learning_rate ${LR} --per_device_train_batch_size ${BATCH} \
     --per_device_eval_batch_size 32 --bf16 \
     --gradient_accumulation_steps 2 --warmup_steps ${WARMUP} \
@@ -25,7 +24,7 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
     --evaluation_strategy steps --eval_steps 100 \
     --save_strategy steps --save_steps 100  --seed ${SEED} \
     --log_level info --logging_strategy steps --logging_steps 10 \
-    --deepspeed configs/ds_config_zero2.json 
+    --deepspeed configs/ds_config_zero2.json  | tee ${OUTPUT_DIR}/train.log
 
 
-python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${MODEL} | tee ${OUTPUT_DIR}/train.log
+python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${OUTPUT_DIR} 
