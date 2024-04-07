@@ -12,6 +12,8 @@ MAX_STEPS=980
 WEIGHT_DECAY=0.01
 OUTPUT_DIR=${MODEL}/${LANGUAGE}_all/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
 
+mkdir -p ${OUTPUT_DIR}
+
 deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
     --model_name_or_path /data/public/wangshuo/UltraLink/models/${MODEL} \
     --output_dir  ${OUTPUT_DIR} \

@@ -133,11 +133,19 @@ def merge_chat_data(input_dir, output_dir):
             
             
 if __name__ == '__main__':
-    file1 = "/home/wanghaoyu/MiniCPM/datas/ru_all_fr_code.jsonl"
-    file2 = "/data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/train_es_code.jsonl"
-    outfile = "./datas/ru_all_fr_code_es_code.jsonl"
-    with open(file1, "r") as f1, open(file2, "r") as f2, open(outfile, "w") as fw:
-        data1 = json.load(f1)
-        data2 = json.load(f2)
-        data = data1 + data2
+        
+    base_path = "/data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/"
+    file_list = [
+        "ru_all",
+        "zh_code",
+        "fr_code",
+        "es_code"
+    ]
+    outfile = os.path.join("./datas/", '_'.join(file_list) + ".jsonl")
+    data=[]
+    for file in file_list:
+        with open(os.path.join(base_path, "train_" + file + ".jsonl"), "r") as f1:
+            data1 = json.load(f1)
+            data.extend(data1)
+    with open(outfile, "w") as fw:
         json.dump(data, fw, ensure_ascii=False, indent=4)
