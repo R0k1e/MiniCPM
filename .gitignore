@@ -6,3 +6,4 @@ inference/vllm/build/
 wip.*
 MiniCPM*
 datas/
+SVD_lora/*

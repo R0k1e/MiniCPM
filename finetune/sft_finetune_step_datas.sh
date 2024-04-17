@@ -14,7 +14,7 @@ MAX_STEPS=1100
 # 3种code 556 step
 
 WEIGHT_DECAY=0.01
-OUTPUT_DIR=${MODEL}/${DATANAME}/${SEED}_${BATCH}_${LR}_${WARMUP}_${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
+OUTPUT_DIR=${MODEL}/${DATANAME}/${SEED}_${BATCH}_${LR}_${WARMUP}_step${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
 
 mkdir -p ${OUTPUT_DIR}
 cd /home/wanghaoyu/MiniCPM/finetune/
@@ -35,11 +35,3 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
 
 
 python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${OUTPUT_DIR}
-full_path=$(pwd)/${OUTPUT_DIR}
-cd ~/UltraEval/
-python ckpt_auto_test.py \
-    --gpu_id 0,1,2,3,4,5,6,7 \
-    --port 6325 --model_type minicpm-raw \
-    --test_list humaneval \
-    --languages ru \
-    --model_path ${full_path} 

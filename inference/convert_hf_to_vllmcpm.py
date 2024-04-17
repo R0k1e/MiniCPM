@@ -94,5 +94,7 @@ if __name__ == "__main__":
     
     load_path = args.load
     if not load_path.endswith('-vllm'):
+        if load_path.endswith('/'):
+            load_path = load_path[:-1]
         save_path = load_path + '-vllm'
         load_model_ckpt(load_path, save_path)  

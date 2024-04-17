@@ -136,10 +136,8 @@ if __name__ == '__main__':
         
     base_path = "/data/public/wangshuo/UltraLink/generated_datas/omg-sft/minicpm/"
     file_list = [
-        "ru_all",
-        "zh_code",
-        "fr_code",
-        "es_code"
+        "en_math",
+        "zh_math",
     ]
     outfile = os.path.join("./datas/", '_'.join(file_list) + ".jsonl")
     data=[]

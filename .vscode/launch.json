@@ -21,6 +21,22 @@
                 "--load", 
                 "/home/wanghaoyu/MiniCPM/finetune/MiniCPM-2B-history",
             ]
-        }
+        },
+        {
+            "name": "SVD合成",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "SVD_decompose.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--merge",
+                "--base_model",
+                "/data/public/wangshuo/UltraLink/models/MiniCPM-2B-history",
+                "--usv_path",
+                "ru_all_SVD_lora.pt",
+                "--save_path", 
+                "./ru_all_merged",
+            ]
+        },
     ]
 }
