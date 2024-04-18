@@ -9,17 +9,14 @@ BATCH=14
 LR=5e-5
 WARMUP=100
 MAX_STEPS=1100
-# 1种code 492 step
-# 2种code 524 step
-# 3种code 556 step
-
+GPU_ID=0,1,2,3,4,5
 WEIGHT_DECAY=0.01
-OUTPUT_DIR=${MODEL}/${DATANAME}/${SEED}_${BATCH}_${LR}_${WARMUP}_step${MAX_STEPS}_${WEIGHT_DECAY}/$formatted_time/
+OUTPUT_DIR=${MODEL}/${DATANAME}/seed${SEED}_batch${BATCH}_lr${LR}_warmup${WARMUP}_step${MAX_STEPS}_weight-decay${WEIGHT_DECAY}/$formatted_time/
 
 mkdir -p ${OUTPUT_DIR}
 cd /home/wanghaoyu/MiniCPM/finetune/
 
-deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
+deepspeed --include localhost:${GPU_ID} finetune.py \
     --model_name_or_path /data/public/wangshuo/UltraLink/models/${MODEL} \
     --output_dir  ${OUTPUT_DIR} \
     --train_data_path  ../datas/${DATANAME}.jsonl \
@@ -35,3 +32,4 @@ deepspeed --include localhost:0,1,2,3,4,5,6,7 finetune.py \
 
 
 python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${OUTPUT_DIR}
+

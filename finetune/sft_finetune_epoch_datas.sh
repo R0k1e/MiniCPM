@@ -10,12 +10,8 @@ LR=5e-5
 WARMUP=10
 EPOCHS=1
 GPU_ID=0,1,2,3,4,5,6,7
-# 1种code 492 step
-# 2种code 524 step
-# 3种code 556 step
-
 WEIGHT_DECAY=0.01
-OUTPUT_DIR=${MODEL}/${DATANAME}/${SEED}_${BATCH}_${LR}_${WARMUP}_epoch${EPOCHS}_${WEIGHT_DECAY}/$formatted_time/
+OUTPUT_DIR=${MODEL}/${DATANAME}/seed${SEED}_batch${BATCH}_lr${LR}_warmup${WARMUP}_epoch${EPOCHS}_weight-decay${WEIGHT_DECAY}/$formatted_time/
 
 mkdir -p ${OUTPUT_DIR}
 cd ~/MiniCPM/finetune/
@@ -36,12 +32,13 @@ deepspeed --include localhost:${GPU_ID}  finetune.py \
 
 
 python ~/MiniCPM/inference/batch_convert_hf_to_vllmcpm.py --load ./${OUTPUT_DIR}
+
 full_path=$(pwd)/${OUTPUT_DIR}
 echo $full_path
 cd ~/UltraEval/
 python ckpt_auto_test.py \
     --gpu_id ${GPU_ID} \
-    --port 6325 --model_type minicpm-raw \
+    --port 6325 --model_type minicpm \
     --test_list humaneval \
     --languages zh \
     --model_path ${full_path} 
