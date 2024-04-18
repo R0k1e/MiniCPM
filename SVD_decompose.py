@@ -5,10 +5,10 @@ import pdb
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-def load_USV(base_path,finetuned_path, usv_path):
-    tokenizer = AutoTokenizer.from_pretrained(finetuned_path)
+def load_USV(base_path, usv_path):
+    tokenizer = AutoTokenizer.from_pretrained(base_path)
     base_model = AutoModelForCausalLM.from_pretrained(base_path,torch_dtype=torch.bfloat16, trust_remote_code=True).to(device)
-    finetuned_model = AutoModelForCausalLM.from_pretrained(finetuned_path,torch_dtype=torch.bfloat16,  trust_remote_code=True).to(device)
+    # finetuned_model = AutoModelForCausalLM.from_pretrained(finetuned_path,torch_dtype=torch.bfloat16,  trust_remote_code=True).to(device)
     # USV乘完之后的是delta
     # usv = torch.load(usv_path)
     # for name, module in finetuned_model.named_modules():
@@ -26,9 +26,9 @@ def load_USV(base_path,finetuned_path, usv_path):
     #                     finetuned_model.get_submodule(f"{name}.{subname}").weight.copy_(base + delta)
           
           
-    finetuned_model = base_model.clone()              
+    finetuned_model = base_model              
     usv = torch.load(usv_path)
-    for name, module in finetuned_model.named_modules():
+    for name, module in tqdm(finetuned_model.named_modules()):
         if "self_attn" in name or "mlp" in name:
             for subname, submodule in module.named_children():
                 with torch.no_grad():
@@ -124,9 +124,6 @@ if __name__ == '__main__':
         if base_model == "":
             print("Please specify the base model")
             exit()
-        finetuned_model = args.finetuned_model
-        if finetuned_model == "":
-            print("Please specify the finetuned model")
         usv_path = args.usv_path
         if usv_path == "":
             print("Please specify the usv path")
@@ -144,5 +141,6 @@ if __name__ == '__main__':
         tokenizer , model = load_USV(base_path=base_model, finetuned_path=base_model, usv_path=usv_path)
         tokenizer.save_pretrained(save_path)
         model.save_pretrained(save_path)
+        
     else:
         print("Please specify the operation")
